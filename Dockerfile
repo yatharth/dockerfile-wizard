@@ -1,8 +1,4 @@
-#!/bin/bash
-
-echo "FROM buildpack-deps:$(awk -F'_' '{print tolower($2)}' <<< $LINUX_VERSION)"
-
-cat << EOF
+FROM buildpack-deps:trusty
 
 # Prepare to install dependencies.
 ENV DEBIAN_FRONTEND noninteractive
@@ -48,5 +44,3 @@ RUN apt-get -yq --no-install-suggests --no-install-recommends install clang-3.7
 
 # Install g++.
 RUN apt-get -yq --no-install-suggests --no-install-recommends install g++-4.9
-
-EOF

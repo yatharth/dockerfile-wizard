@@ -1,30 +1,18 @@
-image_config: &image_config
-
-  # make sure to set your Docker Hub username & password in CircleCI,
-  # either as project-specific environment variables
-  # or as resources in your organization's org-global Context
-
-  IMAGE_NAME: grf
-  IMAGE_TAG: 2
-
-  LINUX_VERSION: UBUNTU_TRUSTY
-
 version: 2
 jobs:
   build:
     machine: true
     environment:
-      <<: *image_config
+      LINUX_VERSION: UBUNTU_TRUSTY
+
+      IMAGE_NAME: grf
+      IMAGE_TAG: 2
 
     steps:
       - checkout
 
-      - run: bash scripts/generate.sh > Dockerfile
-
       - run: docker login -u $DOCKER_USERNAME -p $DOCKER_PASSWORD
-
       - run: docker build -t $DOCKER_USERNAME/$IMAGE_NAME:$IMAGE_TAG .
-
       - run: docker push $DOCKER_USERNAME/$IMAGE_NAME:$IMAGE_TAG && sleep 10
 
       - store_artifacts:
