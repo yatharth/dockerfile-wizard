@@ -46,7 +46,53 @@ jobs:
       - run: |
           echo << EOF
           bash << SCRIPT
-            echo "hello from Docker"
+
+
+
+      - run: |
+          echo << EOF
+          RUN bash << SCRIPT
+          
+          # Prepare to install dependencies.
+          export DEBIAN_FRONTEND=noninteractive
+          mkdir ~/logs
+          sudo -E apt-get -yq update &>> ~/logs/apt-get-update.log
+          sudo -E apt-get -yq install --no-install-suggests --no-install-recommends software-properties-common
+          sudo -E apt-get -yq install --no-install-suggests --no-install-recommends curl
+          
+          # Install dependencies to build C++ core.
+          sudo -E apt-get -yq --no-install-suggests --no-install-recommends install build-essential  # make.
+          sudo -E apt-get -yq --no-install-suggests --no-install-recommends install libopencv-dev valgrind
+          sudo -E apt-add-repository -y "ppa:ubuntu-toolchain-r/test"
+          sudo -E apt-get -yq update &>> ~/logs/apt-get-update.log
+          
+          # Download cmake (stored at ~/cmake/bin/cmake).
+          curl -s https://cmake.org/files/v3.6/cmake-3.6.2-Linux-x86_64.tar.gz > ~/cmake.tar.gz
+          mkdir ~/cmake
+          tar -x -f ~/cmake.tar.gz -C ~/cmake --strip-components=1
+          
+          # Install R.
+          echo "deb http://cran.rstudio.com/bin/linux/ubuntu trusty/" | sudo -E tee -a /etc/apt/sources.list > /dev/null
+          gpg --keyserver keyserver.ubuntu.com --recv-key E084DAB9
+          gpg -a --export E084DAB9 | sudo -E apt-key add -
+          sudo -E apt-get -yq update &>> ~/logs/apt-get-update.log
+          sudo -E apt-get -yq --no-install-suggests --no-install-recommends install r-base
+          
+          # Install dependencies to build R.
+          sudo -E apt-get -yq --no-install-suggests --no-install-recommends install libcurl4-gnutls-dev libssl-dev  # For devtools.
+          sudo -E apt-get -yq --no-install-suggests --no-install-recommends install libxml2-dev libxslt-dev  # For roxygen.
+          sudo -E apt-get -yq --no-install-suggests --no-install-recommends install libgfortran-8-dev liblapack-dev liblapack3 libopenblas-base libopenblas-dev  # For RcppEigen.
+          R -e 'install.packages(c("Rcpp", "devtools", "testthat", "roxygen2", "DiceKriging", "lmtest", "sandwich", "RcppEigen"), repos="http://cran.us.r-project.org")'
+          
+          # Install clang.
+          curl -sSL "http://apt.llvm.org/llvm-snapshot.gpg.key" | sudo -E apt-key add -
+          echo "deb http://apt.llvm.org/precise/ llvm-toolchain-precise-3.7 main" | sudo -E tee -a /etc/apt/sources.list > /dev/null
+          sudo -E apt-get -yq update &>> ~/logs/apt-get-update.log
+          sudo -E apt-get -yq --no-install-suggests --no-install-recommends install clang-3.7
+          
+          # Install g++.
+          sudo -E apt-get -yq --no-install-suggests --no-install-recommends install g++-4.9
+          
           SCRIPT
           EOF >> Dockerfile
 
