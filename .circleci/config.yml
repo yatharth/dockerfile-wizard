@@ -29,9 +29,3 @@ jobs:
 
       - store_artifacts:
           path: Dockerfile
-
-workflows:
-  version: 2
-  dockerfile_wizard:
-    jobs:
-      - build
