@@ -33,7 +33,7 @@ RUN apt-get -yq --no-install-suggests --no-install-recommends install r-base
 # Install dependencies to build R.
 RUN apt-get -yq --no-install-suggests --no-install-recommends install libcurl4-gnutls-dev libssl-dev  # For devtools.
 RUN apt-get -yq --no-install-suggests --no-install-recommends install libxml2-dev libxslt-dev  # For roxygen.
-RUN apt-get -yq --no-install-suggests --no-install-recommends install libgfortran-8-dev liblapack-dev liblapack3 libopenblas-base libopenblas-dev  # For RcppEigen.
+RUN apt-get -yq --no-install-suggests --no-install-recommends install gfortran libgfortran-8-dev liblapack-dev liblapack3 libopenblas-base libopenblas-dev  # For lmtest and RcppEigen.
 RUN R -e 'install.packages(c("Rcpp", "devtools", "testthat", "roxygen2", "DiceKriging", "lmtest", "sandwich", "RcppEigen"), repos="http://cran.us.r-project.org")'
 
 # Install clang.

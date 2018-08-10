@@ -6,7 +6,7 @@ jobs:
       LINUX_VERSION: UBUNTU_TRUSTY
 
       IMAGE_NAME: grf
-      IMAGE_TAG: 2
+      IMAGE_TAG: 3
 
     steps:
       - checkout
