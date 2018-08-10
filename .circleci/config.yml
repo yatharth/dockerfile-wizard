@@ -89,7 +89,9 @@ workflows:
   version: 2
   dockerfile_wizard:
     jobs:
-      - build
+      - build:
+          context: org-global
       - test_image:
+          context: org-global
           requires:
             - build
