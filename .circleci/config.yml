@@ -5,31 +5,9 @@ image_config: &image_config
   # or as resources in your organization's org-global Context
 
   IMAGE_NAME: grf
-
-  IMAGE_TAG: 1
-
-  # NOTE: if you're modifying this config.yml file manually
-  # rather than using the included setup script,
-  # make sure you also add the values of your IMAGE_NAME & IMAGE_TAG variables
-  # to the `test_image` job (line 55)
+  IMAGE_TAG: 2
 
   LINUX_VERSION: UBUNTU_TRUSTY
-
-  # RUBY_VERSION_NUM: # pick a version from https://cache.ruby-lang.org/pub/ruby
-
-  # NODE_VERSION_NUM: # pick a version from https://nodejs.org/dist
-
-  # PYTHON_VERSION_NUM: # pick a version from https://python.org/ftp/python
-
-  JAVA: false
-
-  MYSQL_CLIENT: false
-
-  POSTGRES_CLIENT: false
-
-  DOCKERIZE: false
-
-  BROWSERS: false
 
 version: 2
 jobs:
@@ -42,59 +20,6 @@ jobs:
       - checkout
 
       - run: bash scripts/generate.sh > Dockerfile
-
-      - run: |
-          echo << EOF
-          bash << SCRIPT
-
-
-
-      - run: |
-          echo << EOF
-          RUN bash << SCRIPT
-          
-          # Prepare to install dependencies.
-          export DEBIAN_FRONTEND=noninteractive
-          mkdir ~/logs
-          sudo -E apt-get -yq update &>> ~/logs/apt-get-update.log
-          sudo -E apt-get -yq install --no-install-suggests --no-install-recommends software-properties-common
-          sudo -E apt-get -yq install --no-install-suggests --no-install-recommends curl
-          
-          # Install dependencies to build C++ core.
-          sudo -E apt-get -yq --no-install-suggests --no-install-recommends install build-essential  # make.
-          sudo -E apt-get -yq --no-install-suggests --no-install-recommends install libopencv-dev valgrind
-          sudo -E apt-add-repository -y "ppa:ubuntu-toolchain-r/test"
-          sudo -E apt-get -yq update &>> ~/logs/apt-get-update.log
-          
-          # Download cmake (stored at ~/cmake/bin/cmake).
-          curl -s https://cmake.org/files/v3.6/cmake-3.6.2-Linux-x86_64.tar.gz > ~/cmake.tar.gz
-          mkdir ~/cmake
-          tar -x -f ~/cmake.tar.gz -C ~/cmake --strip-components=1
-          
-          # Install R.
-          echo "deb http://cran.rstudio.com/bin/linux/ubuntu trusty/" | sudo -E tee -a /etc/apt/sources.list > /dev/null
-          gpg --keyserver keyserver.ubuntu.com --recv-key E084DAB9
-          gpg -a --export E084DAB9 | sudo -E apt-key add -
-          sudo -E apt-get -yq update &>> ~/logs/apt-get-update.log
-          sudo -E apt-get -yq --no-install-suggests --no-install-recommends install r-base
-          
-          # Install dependencies to build R.
-          sudo -E apt-get -yq --no-install-suggests --no-install-recommends install libcurl4-gnutls-dev libssl-dev  # For devtools.
-          sudo -E apt-get -yq --no-install-suggests --no-install-recommends install libxml2-dev libxslt-dev  # For roxygen.
-          sudo -E apt-get -yq --no-install-suggests --no-install-recommends install libgfortran-8-dev liblapack-dev liblapack3 libopenblas-base libopenblas-dev  # For RcppEigen.
-          R -e 'install.packages(c("Rcpp", "devtools", "testthat", "roxygen2", "DiceKriging", "lmtest", "sandwich", "RcppEigen"), repos="http://cran.us.r-project.org")'
-          
-          # Install clang.
-          curl -sSL "http://apt.llvm.org/llvm-snapshot.gpg.key" | sudo -E apt-key add -
-          echo "deb http://apt.llvm.org/precise/ llvm-toolchain-precise-3.7 main" | sudo -E tee -a /etc/apt/sources.list > /dev/null
-          sudo -E apt-get -yq update &>> ~/logs/apt-get-update.log
-          sudo -E apt-get -yq --no-install-suggests --no-install-recommends install clang-3.7
-          
-          # Install g++.
-          sudo -E apt-get -yq --no-install-suggests --no-install-recommends install g++-4.9
-          
-          SCRIPT
-          EOF >> Dockerfile
 
       - run: docker login -u $DOCKER_USERNAME -p $DOCKER_PASSWORD
 
