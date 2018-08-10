@@ -6,8 +6,7 @@ cat << EOF
 
 # Prepare to install dependencies.
 ENV DEBIAN_FRONTEND noninteractive
-RUN mkdir ~/logs
-RUN apt-get -yq update &>> ~/logs/apt-get-update.log
+RUN apt-get -yq update
 RUN apt-get -yq install --no-install-suggests --no-install-recommends software-properties-common
 RUN apt-get -yq install --no-install-suggests --no-install-recommends curl
 
@@ -15,7 +14,7 @@ RUN apt-get -yq install --no-install-suggests --no-install-recommends curl
 RUN apt-get -yq --no-install-suggests --no-install-recommends install build-essential  # make.
 RUN apt-get -yq --no-install-suggests --no-install-recommends install libopencv-dev valgrind
 RUN apt-add-repository -y "ppa:ubuntu-toolchain-r/test"
-RUN apt-get -yq update &>> ~/logs/apt-get-update.log
+RUN apt-get -yq update
 
 # Download cmake (stored at ~/cmake/bin/cmake).
 ADD https://cmake.org/files/v3.7/cmake-3.7.2-Linux-x86_64.sh /cmake.sh
@@ -32,7 +31,7 @@ RUN tar -x -f ~/cmake.tar.gz -C ~/cmake --strip-components=1
 RUN echo "deb http://cran.rstudio.com/bin/linux/ubuntu trusty/" | tee -a /etc/apt/sources.list > /dev/null
 RUN gpg --keyserver keyserver.ubuntu.com --recv-key E084DAB9
 RUN gpg -a --export E084DAB9 | apt-key add -
-RUN apt-get -yq update &>> ~/logs/apt-get-update.log
+RUN apt-get -yq update
 RUN apt-get -yq --no-install-suggests --no-install-recommends install r-base
 
 # Install dependencies to build R.
@@ -44,7 +43,7 @@ RUN R -e 'install.packages(c("Rcpp", "devtools", "testthat", "roxygen2", "DiceKr
 # Install clang.
 RUN curl -sSL "http://apt.llvm.org/llvm-snapshot.gpg.key" | apt-key add -
 RUN echo "deb http://apt.llvm.org/precise/ llvm-toolchain-precise-3.7 main" | tee -a /etc/apt/sources.list > /dev/null
-RUN apt-get -yq update &>> ~/logs/apt-get-update.log
+RUN apt-get -yq update
 RUN apt-get -yq --no-install-suggests --no-install-recommends install clang-3.7
 
 # Install g++.
