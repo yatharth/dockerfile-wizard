@@ -45,7 +45,9 @@ jobs:
 
       - run: |
           echo << EOF
-            # hello
+          bash << SCRIPT
+            echo "hello from Docker"
+          SCRIPT
           EOF >> Dockerfile
 
       - run: docker login -u $DOCKER_USERNAME -p $DOCKER_PASSWORD
@@ -57,40 +59,8 @@ jobs:
       - store_artifacts:
           path: Dockerfile
 
-  # test_image:
-  #   docker:
-  #     - image: $DOCKER_USERNAME/grf:1
-  #       environment:
-  #         <<: *image_config
-
-  #   steps:
-  #     - checkout
-
-  #     - run:
-  #         name: start Xvfb for phantomjs test
-  #         command: Xvfb :99
-  #         background: true
-
-  #     - run:
-  #         name: bats tests
-  #         command: |
-  #           mkdir -p test_results/bats
-  #           bats scripts/tests.bats | \
-  #           perl scripts/tap-to-junit.sh > \
-  #           test_results/bats/results.xml
-
-  #     - store_test_results:
-  #         path: test_results
-
-  #     - store_artifacts:
-  #         path: test_results
-
 workflows:
   version: 2
   dockerfile_wizard:
     jobs:
       - build
-      # - test_image:
-      #     context: org-global
-      #     requires:
-      #       - build
